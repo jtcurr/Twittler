@@ -1,0 +1,11 @@
+h1{
+text-align: center;
+}
+body{
+	background-color: #fcf6ef;
+	font-family: "Helvetica";
+}
+a{
+	float: right;
+	font-style: italic;
+}

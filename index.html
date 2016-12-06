@@ -1,27 +1,104 @@
 <!DOCTYPE html>
 <html>
+<html lang="en">
   <head>
+  <meta charset="utf-8">
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+  <h1>Twittler</h1>
+  <br>
+  <form action="action_page.php">
+  User Name:<br>
+  <input type="text" name="firstname" value="...in progress"><br>
+  Tweet:<br>
+  <input type="text" name="lastname"><br><br>
+  <input type="submit" value="Submit">
+</form>
+<br>
+<br>
+ 
     <script>
-
       $(document).ready(function(){
         var $body = $('body');
-        $body.html('');
+        //$body.html('');
+        var $refresh = $('<input type="button" value="Get Tweets" />');
+         ($refresh).on('click', function(s){
+          s.preventDefault();
+          loadNewTweets();
+         })
 
-        var index = streams.home.length - 1;
+      $refresh.appendTo($("body"));
+        $('body').append('<br>');
+
+        
+        function timeStamp(){//creating a current time stamp;
+          var now = new Date();
+          var date = now.getMonth() + '/' +  now.getDate() + "/" + now.getFullYear();
+          var time = now.getHours() + ':' +  now.getMinutes() + ":" + now.getSeconds();
+          return date + " || " + time;
+        }
+       
+           function loadUserHistory(name){//clear the page and display each element of obj at name.
+          $body.html('');
+          $('body').append('<h1>Twittler</h1><br>');
+          var $moreTweets = $('<input type="button" onclick="location.reload()" value="Return to Twittler Home" />');
+          $moreTweets.appendTo($("body"));
+          $('body').append('<br><br>');
+          $('body').append('User: ' + name);
+          $('body').append('<br><br>');
+          for(var i = 0; i < obj[name].length; i++){
+           /* var current = new Date();
+            var str = obj[name][i].slice(obj[name][i].length-2);
+            var pastTimer = JSON.parse(str);
+            
+            if(pastTimer > current.getSeconds() && pastTimer-current.getSeconds() < 10){
+                $('body').append(obj[name][i] + '<a>Just Now!</a>' + '<br>');
+            }
+             if(pastTimer < current.getSeconds() && current.getSeconds() - pastTimer < 10){
+                $('body').append(obj[name][i] + '<a>Just Now!</a>' + '<br>');
+            }
+            else{*/
+             $('body').append(obj[name][i] + '<br>');
+            //}
+            }
+          }
+          
+        
+        
+          function createInput(l){//create a history button
+          var $input = $('<input type="button" value="History" />');
+      $input.appendTo($("body"));
+      ($input).on('click', function(e){
+        e.preventDefault();
+        loadUserHistory(l);
+          });
+}  
+        var obj = {};//holds names of users and their tweets
+        
+        function loadNewTweets(){
+          var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
           var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
+
+          if(obj[tweet.user] !== undefined){// checking to see if the user has any saved tweets
+            obj[tweet.user].push(tweet.message + ' ' + timeStamp());
+          }
+          else{
+            obj[tweet.user] = [tweet.message + ' ' + timeStamp()]; 
+          }
+          $tweet.text('@' + tweet.user + ': ' + tweet.message + " " + timeStamp());
           $tweet.appendTo($body);
+          createInput(tweet.user);
           index -= 1;
         }
+      }
+
 
       });
-
     </script>
   </body>
 </html>
